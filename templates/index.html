@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+{% block content %}
+  <a href="{{ url_for('employee_new') }}" class="btn btn-primary mb-3">Add Employee</a>
+  <table class="table table-striped">
+    <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Dept</th><th>Role</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for e in employees %}
+      <tr>
+        <td>{{ e.id }}</td>
+        <td><a href="{{ url_for('employee_detail', emp_id=e.id) }}">{{ e.first_name }} {{ e.last_name }}</a></td>
+        <td>{{ e.email }}</td>
+        <td>{{ e.department.name if e.department else '-' }}</td>
+        <td>{{ e.role.title if e.role else '-' }}</td>
+        <td>
+          <form action="{{ url_for('employee_delete', emp_id=e.id) }}" method="post" style="display:inline" onsubmit="return confirm('Delete?')">
+            <button class="btn btn-sm btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

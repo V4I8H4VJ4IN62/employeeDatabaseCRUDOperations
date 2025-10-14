@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+{% block content %}
+  <h3>{{ emp.first_name }} {{ emp.last_name }}</h3>
+  <p><strong>Email:</strong> {{ emp.email }}</p>
+  <p><strong>Phone:</strong> {{ emp.phone or '-' }}</p>
+  <p><strong>Department:</strong> {{ emp.department.name if emp.department else '-' }}</p>
+  <p><strong>Role:</strong> {{ emp.role.title if emp.role else '-' }}</p>
+  <h5>Salary history</h5>
+  <ul>
+    {% for s in emp.salaries %}
+      <li>{{ s.effective_date }} - {{ s.salary }} ({{ s.note }})</li>
+    {% else %}
+      <li>No records</li>
+    {% endfor %}
+  </ul>
+  <a href="{{ url_for('index') }}" class="btn btn-primary">Back</a>
+{% endblock %}
