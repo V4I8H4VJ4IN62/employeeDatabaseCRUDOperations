@@ -1,39 +1,53 @@
 {% extends 'layout.html' %}
 {% block content %}
+  <h3 class="mb-3">
+    {{ 'Edit Employee' if emp else 'Add New Employee' }}
+  </h3>
+
   <form method="post">
     <div class="row">
       <div class="col-md-6">
         <label class="form-label">First name</label>
-        <input name="first_name" class="form-control" required>
+        <input name="first_name" class="form-control" required
+               value="{{ emp.first_name if emp else '' }}">
       </div>
       <div class="col-md-6">
         <label class="form-label">Last name</label>
-        <input name="last_name" class="form-control" required>
+        <input name="last_name" class="form-control" required
+               value="{{ emp.last_name if emp else '' }}">
       </div>
     </div>
+
     <div class="row mt-2">
       <div class="col-md-6">
         <label class="form-label">Email</label>
-        <input name="email" class="form-control" type="email" required>
+        <input name="email" class="form-control" type="email" required
+               value="{{ emp.email if emp else '' }}">
       </div>
       <div class="col-md-6">
         <label class="form-label">Phone</label>
-        <input name="phone" class="form-control">
+        <input name="phone" class="form-control"
+               value="{{ emp.phone if emp else '' }}">
       </div>
     </div>
+
     <div class="row mt-2">
       <div class="col-md-4">
         <label class="form-label">DOB</label>
-        <input name="dob" class="form-control" type="date">
+        <input name="dob" class="form-control" type="date"
+               value="{{ emp.dob.strftime('%Y-%m-%d') if emp and emp.dob else '' }}">
       </div>
       <div class="col-md-4">
         <label class="form-label">Hire Date</label>
-        <input name="hire_date" class="form-control" type="date" required>
+        <input name="hire_date" class="form-control" type="date" required
+               value="{{ emp.hire_date.strftime('%Y-%m-%d') if emp and emp.hire_date else '' }}">
       </div>
+      {% if not emp %}
       <div class="col-md-4">
         <label class="form-label">Salary (optional)</label>
         <input name="salary" class="form-control" type="number" step="0.01">
       </div>
+      {% endif %}
     </div>
 
     <div class="row mt-2">
@@ -41,31 +55,44 @@
         <label class="form-label">Department</label>
         <select name="department_id" class="form-select" required>
           {% for d in departments %}
-          <option value="{{ d.id }}">{{ d.name }}</option>
+            <option value="{{ d.id }}"
+              {% if emp and emp.department_id == d.id %}selected{% endif %}>
+              {{ d.name }}
+            </option>
           {% endfor %}
         </select>
       </div>
+
       <div class="col-md-4">
         <label class="form-label">Role</label>
         <select name="role_id" class="form-select" required>
           {% for r in roles %}
-          <option value="{{ r.id }}">{{ r.title }} ({{ r.grade or '' }})</option>
+            <option value="{{ r.id }}"
+              {% if emp and emp.role_id == r.id %}selected{% endif %}>
+              {{ r.title }} ({{ r.grade or '' }})
+            </option>
           {% endfor %}
         </select>
       </div>
+
       <div class="col-md-4">
         <label class="form-label">Manager (optional)</label>
         <select name="manager_id" class="form-select">
           <option value="">-- none --</option>
           {% for m in managers %}
-          <option value="{{ m.id }}">{{ m.first_name }} {{ m.last_name }}</option>
+            <option value="{{ m.id }}"
+              {% if emp and emp.manager_id == m.id %}selected{% endif %}>
+              {{ m.first_name }} {{ m.last_name }}
+            </option>
           {% endfor %}
         </select>
       </div>
     </div>
 
     <div class="mt-3">
-      <button class="btn btn-success">Save</button>
+      <button class="btn btn-success">
+        {{ 'Update Employee' if emp else 'Save' }}
+      </button>
       <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
     </div>
   </form>

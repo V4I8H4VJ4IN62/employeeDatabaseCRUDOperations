@@ -111,6 +111,32 @@ def employee_new():
         return redirect(url_for('index'))
     return render_template('employee_form.html', departments=departments, roles=roles, managers=managers)
 
+@app.route('/employee/<int:emp_id>/edit', methods=['GET', 'POST'])
+def employee_edit(emp_id):
+    emp = Employee.query.get_or_404(emp_id)
+    departments = Department.query.all()
+    roles = Role.query.all()
+    managers = Employee.query.filter(Employee.id != emp.id).all()  # Avoid assigning self as manager
+
+    if request.method == 'POST':
+        data = request.form
+        emp.first_name = data.get('first_name')
+        emp.last_name = data.get('last_name')
+        emp.email = data.get('email')
+        emp.phone = data.get('phone')
+        emp.dob = datetime.strptime(data.get('dob'), '%Y-%m-%d') if data.get('dob') else None
+        emp.hire_date = datetime.strptime(data.get('hire_date'), '%Y-%m-%d')
+        emp.department_id = int(data.get('department_id'))
+        emp.role_id = int(data.get('role_id'))
+        emp.manager_id = int(data.get('manager_id')) if data.get('manager_id') else None
+
+        db.session.commit()
+        flash('Employee details updated successfully!', 'success')
+        return redirect(url_for('employee_detail', emp_id=emp.id))
+
+    return render_template('employee_form.html', emp=emp, departments=departments, roles=roles, managers=managers)
+
+
 @app.route('/employee/<int:emp_id>')
 def employee_detail(emp_id):
     emp = Employee.query.get_or_404(emp_id)
